@@ -5,6 +5,8 @@ ofxKinectBlobFinder
 
 See github.com/dasaki/ofxKinectBlobTracker for a working example code::blocks project/code.
 
+Watch it in action here: https://www.youtube.com/watch?v=uwvYgiwrTwU
+
 Comments:
 
 Part of the cvCinema project: www.cvcinema.com
