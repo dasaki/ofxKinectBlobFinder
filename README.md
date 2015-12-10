@@ -3,6 +3,8 @@ ofxKinectBlobFinder
 
 3D blob finder to be used with ofxKinect. Avoids occlusion issues when using a 2D contourfinder
 
+See github.com/dasaki/ofxKinectBlobTracker for a working example code::blocks project/code.
+
 Comments:
 
 Part of the cvCinema project: www.cvcinema.com
