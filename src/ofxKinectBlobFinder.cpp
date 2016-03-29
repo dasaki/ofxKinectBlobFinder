@@ -53,16 +53,15 @@ ofxKinectBlobFinder::ofxKinectBlobFinder() {
 // ***************************************************************************
 //                                INIT
 // ***************************************************************************
-void ofxKinectBlobFinder::init(ofxKinect *newKinect, bool standarized) {
-
+void ofxKinectBlobFinder::init(ofxKinectV2 *newKinect, bool standarized) {
     ofLog(OF_LOG_VERBOSE, "ofxKinectBlobFinder: init");
     if (newKinect == NULL) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - ofxKinect pointer is not assigned");
-    else if (!newKinect->isConnected()) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - kinect not connected");
+    else if (!newKinect) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - kinect not connected");
     else {
         bStandarized = standarized;
         kinectPtr = newKinect;
-        kWidth = kinectPtr->getWidth();
-        kHeight = kinectPtr->getHeight();
+        kWidth = kinectPtr->getRgbPixels().getWidth();
+        kHeight = kinectPtr->getRgbPixels().getHeight();
         kNPix = kWidth*kHeight;
         bFinderInited = setResolution(__DEFAULT_RESOLUTION);
     }
@@ -88,7 +87,7 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
         return false;
     }
     if ( !maskImage->bAllocated() || (maskImage->getWidth() != kWidth) || (maskImage->getHeight() != kHeight) ||
-         (maskImage->bpp != 8) ) {
+         (maskImage->getPixels().getBitsPerPixel() != 8) ) {
              ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - mask image mismatch");
              return false;
     }
@@ -231,7 +230,7 @@ bool ofxKinectBlobFinder::createCloud( unsigned char * maskPix,
                                        const ofVec3f boundingBoxMin, const ofVec3f boundingBoxMax) {
     ofVec3f thePos;
     p2D3 * p3Dptr = &p3DCloud[0];
-    float* distance = kinectPtr->getDistancePixels();
+    float* distance = kinectPtr->getRawDepthPixels();
 
     int row_incr = kWidth*(resolution-1);
 
@@ -243,7 +242,7 @@ bool ofxKinectBlobFinder::createCloud( unsigned char * maskPix,
                 (*p3Dptr).pos = nullPoint;
             }
             else {
-               thePos = kinectPtr->getWorldCoordinateAt(i,j,(*distance));
+               thePos = kinectPtr->getWorldCoordinateAt(i,j);
                if (bStandarized) thePos = ofVec3f(thePos.x,thePos.z,-thePos.y);
 
              /*   thePos = ofVec3f( float((i - cx_d) * z * fx_d),

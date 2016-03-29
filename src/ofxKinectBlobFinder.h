@@ -17,7 +17,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxKinect.h"
+#include "ofxKinectV2.h"
 #include "ofxKinectBlob.h"
 
 
@@ -32,7 +32,7 @@ struct p2D3 {
 class ofxKinectBlobFinder {
     public:
       ofxKinectBlobFinder();
-      void init(ofxKinect *newKinect, bool standarized);
+      void init(ofxKinectV2 *newKinect, bool standarized);
       bool isInited();
       void setRotation(const ofVec3f newRotation);
       void setTranslation(const ofVec3f newTranslation);
@@ -54,7 +54,7 @@ class ofxKinectBlobFinder {
 
     protected:
 
-        ofxKinect * kinectPtr;
+        ofxKinectV2 * kinectPtr;
         ofVec3f rotation;
         ofVec3f translation;
         ofVec3f scale;
