@@ -60,10 +60,8 @@ void ofxKinectBlobFinder::init(ofxKinectV2 *newKinect, bool standarized) {
     else {
         bStandarized = standarized;
         kinectPtr = newKinect;
-//        kWidth = kinectPtr->getDepthPixels().getWidth();
-//        kHeight = kinectPtr->getDepthPixels().getHeight();
-        kWidth = 512;
-        kHeight = 424;
+        kWidth = kinectPtr->getRawDepthPixels().getWidth();
+        kHeight = kinectPtr->getRawDepthPixels().getHeight();
         kNPix = kWidth*kHeight;
         bFinderInited = setResolution(__DEFAULT_RESOLUTION);
     }
@@ -98,15 +96,18 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid width");
         return false;
     }
+
     if((maskImage->getPixels().getHeight() != kHeight)){
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid height");
 
         return false;
     }
+
     if((maskImage->getPixels().getBitsPerPixel() != 8) ) {
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - mask image mismatch");
         return false;
     }
+
     if (!createCloud(maskImage->getPixels(), boundingBoxMin, boundingBoxMax) ) {
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - could not create pointcloud");
         return false;
