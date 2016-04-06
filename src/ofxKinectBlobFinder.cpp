@@ -60,8 +60,10 @@ void ofxKinectBlobFinder::init(ofxKinectV2 *newKinect, bool standarized) {
     else {
         bStandarized = standarized;
         kinectPtr = newKinect;
-        kWidth = kinectPtr->getRgbPixels().getWidth();
-        kHeight = kinectPtr->getRgbPixels().getHeight();
+//        kWidth = kinectPtr->getDepthPixels().getWidth();
+//        kHeight = kinectPtr->getDepthPixels().getHeight();
+        kWidth = 512;
+        kHeight = 424;
         kNPix = kWidth*kHeight;
         bFinderInited = setResolution(__DEFAULT_RESOLUTION);
     }
@@ -86,17 +88,31 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - must init finder first");
         return false;
     }
-    if ( !maskImage->bAllocated() || (maskImage->getWidth() != kWidth) || (maskImage->getHeight() != kHeight) ||
-         (maskImage->getPixels().getBitsPerPixel() != 8) ) {
-             ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - mask image mismatch");
-             return false;
+
+    if ( !maskImage->isAllocated() ) {
+        ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: not allocated");
+        return false;
+    }
+    
+    if(maskImage->getPixels().getWidth() != kWidth){
+        ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid width");
+        return false;
+    }
+    if((maskImage->getPixels().getHeight() != kHeight)){
+        ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid height");
+
+        return false;
+    }
+    if((maskImage->getPixels().getBitsPerPixel() != 8) ) {
+        ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - mask image mismatch");
+        return false;
     }
     if (!createCloud(maskImage->getPixels(), boundingBoxMin, boundingBoxMax) ) {
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - could not create pointcloud");
         return false;
     }
 
-    vector<ofxKinectBlob>    tempBlobs;
+    vector<ofxKinectBlob> tempBlobs;
     int queueIndex = 0;
     int lastQueued = 0;
     int pixIndex = 0;
