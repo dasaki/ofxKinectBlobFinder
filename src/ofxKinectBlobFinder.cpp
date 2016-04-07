@@ -23,8 +23,8 @@
 #define FLAG_QUEUED -2
 #define FLAG_PROCESSED -1
 
-#define __DEFAULT_K_WIDTH 640
-#define __DEFAULT_K_HEIGHT 480
+#define __DEFAULT_K_WIDTH 512
+#define __DEFAULT_K_HEIGHT 424
 
 #define __DEFAULT_RESOLUTION BF_LOW_RES
 
@@ -53,15 +53,15 @@ ofxKinectBlobFinder::ofxKinectBlobFinder() {
 // ***************************************************************************
 //                                INIT
 // ***************************************************************************
-void ofxKinectBlobFinder::init(ofxKinectV2 *newKinect, bool standarized) {
+void ofxKinectBlobFinder::init(ofxKinectV2 * newKinect, bool standarized) {
     ofLog(OF_LOG_VERBOSE, "ofxKinectBlobFinder: init");
     if (newKinect == NULL) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - ofxKinect pointer is not assigned");
     else if (!newKinect) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - kinect not connected");
     else {
         bStandarized = standarized;
         kinectPtr = newKinect;
-        kWidth = kinectPtr->getRawDepthPixels().getWidth();
-        kHeight = kinectPtr->getRawDepthPixels().getHeight();
+        kWidth = __DEFAULT_K_WIDTH;
+        kHeight = __DEFAULT_K_HEIGHT;
         kNPix = kWidth*kHeight;
         bFinderInited = setResolution(__DEFAULT_RESOLUTION);
     }
