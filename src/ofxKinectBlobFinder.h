@@ -32,7 +32,7 @@ struct p2D3 {
 class ofxKinectBlobFinder {
     public:
       ofxKinectBlobFinder();
-      void init(ofxKinectV2 *newKinect, bool standarized);
+      void init(ofxKinectV2 * newKinect, bool standarized);
       bool isInited();
       void setRotation(const ofVec3f newRotation);
       void setTranslation(const ofVec3f newTranslation);
