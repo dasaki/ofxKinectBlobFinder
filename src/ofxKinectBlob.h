@@ -22,7 +22,7 @@ class ofxKinectBlob:public ofNode {
             mesh.drawVertices();
             ofTranslate(massCenter);//centroid);
             ofDrawAxis(0.5f);
-            ofScale(maxX.x-minX.x, maxY.y-minY.y,maxZ.z-minZ.z);
+            ofScale(maxX.x - minX.x, maxY.y - minY.y, maxZ.z - minZ.z);
             //ofBox(1);
             // if (bDrawAxis)
             // if (bDrawBox) drawGlWireBox();
