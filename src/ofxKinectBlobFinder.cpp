@@ -23,18 +23,19 @@
 #define FLAG_QUEUED -2
 #define FLAG_PROCESSED -1
 
-#define __DEFAULT_K_WIDTH 512
-#define __DEFAULT_K_HEIGHT 424
+#define __DEFAULT_K_WIDTH 640
+#define __DEFAULT_K_HEIGHT 480
 
 #define __DEFAULT_RESOLUTION BF_LOW_RES
 
 #define K_RANGE_MIN 0.5f
 #define K_RANGE_MAX 5.00f
-
+/*
 static double fx_d = 1.0 / 5.9421434211923247e+02;
 static double fy_d = 1.0 / 5.9104053696870778e+02;
 static float cx_d = 3.3930780975300314e+02;
 static float cy_d = 2.4273913761751615e+02;
+*/
 
 // ***************************************************************************
 //                                CONSTRUCTORS
@@ -53,7 +54,7 @@ ofxKinectBlobFinder::ofxKinectBlobFinder() {
 // ***************************************************************************
 //                                INIT
 // ***************************************************************************
-void ofxKinectBlobFinder::init(ofxKinectV2 * newKinect, bool standarized) {
+void ofxKinectBlobFinder::init(ofxKinect * newKinect, bool standarized) {
     ofLog(OF_LOG_VERBOSE, "ofxKinectBlobFinder: init");
     if (newKinect == NULL) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - ofxKinect pointer is not assigned");
     else if (!newKinect) ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: init - kinect not connected");
@@ -92,12 +93,12 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
         return false;
     }
     
-    if(maskImage->getPixels().getWidth() != kWidth){
+    if(maskImage->getWidth() != kWidth){
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid width");
         return false;
     }
 
-    if((maskImage->getPixels().getHeight() != kHeight)){
+    if((maskImage->getHeight() != kHeight)){
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: invalid height");
 
         return false;
@@ -108,7 +109,7 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
         return false;
     }
 
-    if (!createCloud(maskImage->getPixels(), boundingBoxMin, boundingBoxMax) ) {
+    if (!createCloud(maskImage->getPixels().getData(), boundingBoxMin, boundingBoxMax) ) {
         ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: findBlobs - could not create pointcloud");
         return false;
     }
@@ -132,8 +133,8 @@ bool ofxKinectBlobFinder::findBlobs( ofImage * maskImage,
             (tempBlobs.size() < maxBlobs) ) {
         queueIndex = 0;
         lastQueued = 0;
-        minX = minY = minZ = 100;
-        maxX = maxY = maxZ = -100;
+        minX = minY = minZ = 99999;
+        maxX = maxY = maxZ = -99999;
         //search for next unprocessed pixel
         while ( (pixIndex < nPix) &&
                 (p3DCloud[pixIndex].flag != FLAG_IDLE) ) pixIndex++;
@@ -247,12 +248,12 @@ bool ofxKinectBlobFinder::createCloud( unsigned char * maskPix,
                                        const ofVec3f boundingBoxMin, const ofVec3f boundingBoxMax) {
     ofVec3f thePos;
     p2D3 * p3Dptr = &p3DCloud[0];
-    float* distance = kinectPtr->getRawDepthPixels();
+    float* distance = kinectPtr->getDistancePixels().getData();
 
     int row_incr = kWidth*(resolution-1);
 
-    for (int j = 0; j < kHeight; j+=resolution) {
-        for (int i = 0; i < kWidth; i+=resolution) {
+    for (unsigned int j = 0; j < kHeight; j+=resolution) {
+        for (unsigned int i = 0; i < kWidth; i+=resolution) {
             float z = (*distance)*0.001; // mm to m
             if ( (z == 0) || (*maskPix ==  0) || (z > K_RANGE_MAX) || (z < K_RANGE_MIN) ){
                 (*p3Dptr).flag = FLAG_BACKGROUND;
